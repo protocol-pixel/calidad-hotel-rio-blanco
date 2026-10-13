@@ -22,8 +22,8 @@ const n=D.length,mx=D.reduce((s,r)=>s+r[1],0)/n,my=D.reduce((s,r)=>s+r[2],0)/n;
 let sxy=0,sxx=0,syy=0;D.forEach(r=>{sxy+=(r[1]-mx)*(r[2]-my);sxx+=(r[1]-mx)**2;syy+=(r[2]-my)**2});
 const m=sxy/sxx,b=my-m*mx,rr=sxy/Math.sqrt(sxx*syy);
 el('line',{id:'tr',x1:X(8.4),y1:Y(m*8.4+b),x2:X(17.6),y2:Y(m*17.6+b),stroke:'#1F2622','stroke-width':3,'stroke-dasharray':'1800'});
-D.forEach((r,i)=>{const pk=r[0]=='12';el('circle',{cx:X(r[1]),cy:Y(r[2]),r:pk?16:12,fill:pk?'#B9482F':r[1]>=14?'#D98B6F':'#8A7F6E',class:'p',style:`animation-delay:${.3+i*.22}s`})});
-tx(X(17)-26,Y(15)+9,'Sábado 12: 15 errores',{'text-anchor':'end','font-weight':700,class:'f',style:'animation-delay:3.2s'});
+D.forEach((r,i)=>{const pk=r[0]=='12';el('circle',{cx:X(r[1]),cy:Y(r[2]),r:pk?16:12,fill:pk?'#B9482F':r[1]>14?'#D98B6F':'#8A7F6E',class:'p',style:`animation-delay:${.3+i*.22}s`})});
+tx(X(9),Y(1)-26,'3 días',{fill:'#5B5348','font-size':22,class:'f',style:'animation-delay:3.4s'});tx(X(8),Y(1)-26,'2 días',{fill:'#5B5348','font-size':22,class:'f',style:'animation-delay:3.4s'});tx(X(17)-26,Y(15)+9,'Sábado 12: 15 errores',{'text-anchor':'end','font-weight':700,class:'f',style:'animation-delay:3.2s'});
 tx(x0+20,Y(14.5),`r =${rr.toFixed(3).replace('.',',')}`,{'text-anchor':'start','font-size':36,'font-weight':700,class:'f',style:'animation-delay:4.6s'});
 tx(x0+20,Y(14.5)+40,`y = ${m.toFixed(2).replace('.',',')}x − ${(-b).toFixed(2).replace('.',',')}`,{'text-anchor':'start',fill:'#5B5348',class:'f',style:'animation-delay:4.6s'});
 </script></body></html>
