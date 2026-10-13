@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:transparent;font-family:'Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden}
+text{font-size:24px;fill:#1F2622}.cat{font-weight:700;font-size:26px}.m{font-weight:700;fill:#B9482F}
+.a{opacity:0;animation:o .6s forwards}@keyframes o{to{opacity:1}}
+</style></head><body><svg id="s" width="1664" height="630" viewBox="0 0 1664 630"></svg>
+<script>
+const S=document.getElementById('s'),NS='http://www.w3.org/2000/svg';
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||S).appendChild(e);return e}
+function tx(x,y,s,a,p){const e=el('text',Object.assign({x,y},a||{}),p);e.textContent=s;return e}
+const SY=330,cols=[470,880,1250],ink='#1F2622',terra='#B9482F',line='#8A7F6E';
+const bx=(c,y)=>c+(y-120)/210*110,bb=(c,y)=>c+(540-y)/210*110;
+el('defs',{}).innerHTML='<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1F2622"/></marker>';
+el('line',{x1:20,x2:1396,y1:SY,y2:SY,stroke:ink,'stroke-width':4,'marker-end':'url(#ar)'});
+const hd=el('g',{});el('rect',{x:1400,y:270,width:252,height:120,rx:16,fill:terra},hd);
+tx(1526,320,'Habitación',{'text-anchor':'middle','font-weight':700,fill:'#F4EEE3',style:'fill:#F4EEE3;font-size:28px'},hd);tx(1526,356,'con defectos',{'text-anchor':'middle',style:'fill:#F4EEE3;font-size:28px;font-weight:700'},hd);
+const TOPC=[['Mano de obra',['Sin capacitación en el estándar','Sin refuerzo en días pico','Supervisora con doble rol'],0],['Métodos',['Sin procedimiento escrito','Sin inspección final','Orden sin ver llegadas'],1],['Materiales',['Art. de aseo sin kits','Ropa blanca sin revisar'],0]];
+const bot=[['Máquinas y equipos',['Carros de limpieza incompletos']],['Medición',['Sin checklist ni registro']],['Entorno',['Pico de salidas 11-13 h']]];
+let dl=0;
+TOPC.forEach((t,j)=>{const c=cols[j],m=t[2],g=el('g',{class:'a',style:`animation-delay:${dl}s`});dl+=.35;
+el('rect',{x:c-140,y:66,width:280,height:54,rx:12,fill:m?'#F6DCD3':'#FBF7F0',stroke:m?terra:ink,'stroke-width':m?3:1.5},g);
+tx(c,103,t[0],{'text-anchor':'middle',class:'cat'},g);
+el('line',{x1:c,y1:120,x2:c+110,y2:SY,stroke:m?terra:line,'stroke-width':m?4:2.5},g);
+t[1].forEach((s,i)=>{const y=168+i*52,x=bx(c,y);el('line',{x1:x-14,x2:x-2,y1:y-8,y2:y-8,stroke:line,'stroke-width':2},g);tx(x-20,y,s,{'text-anchor':'end',class:m&&i<2?'m':''},g)})});
+bot.forEach((t,j)=>{const c=cols[j],g=el('g',{class:'a',style:`animation-delay:${dl}s`});dl+=.35;
+el('rect',{x:c-150,y:540,width:300,height:54,rx:12,fill:'#FBF7F0',stroke:ink,'stroke-width':1.5},g);
+tx(c,577,t[0],{'text-anchor':'middle',class:'cat'},g);
+el('line',{x1:c,y1:540,x2:c+110,y2:SY,stroke:line,'stroke-width':2.5},g);
+t[1].forEach((s,i)=>{const y=438,x=bb(c,y);el('line',{x1:x-14,x2:x-2,y1:y-8,y2:y-8,stroke:line,'stroke-width':2},g);tx(x-20,y,s,{'text-anchor':'end'},g)})});
+</script></body></html>

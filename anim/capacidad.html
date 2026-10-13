@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:transparent;font-family:'Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden}
+.b{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);animation:g .6s forwards}@keyframes g{to{transform:scaleY(1)}}
+.f{opacity:0;animation:o .6s forwards}@keyframes o{to{opacity:1}}
+</style></head><body><svg id="s" width="1092" height="630" viewBox="0 0 1092 630"></svg>
+<script>
+const S=document.getElementById('s'),NS='http://www.w3.org/2000/svg';
+const D=[0,1,0,2,3,4,5,4,6,9,9,8,12,12,5,10,13,14,11,9,3,5,4,7,1,3,0,0,1,0];
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);S.appendChild(e);return e}
+function tx(x,y,s,a){const e=el('text',Object.assign({x,y,'font-size':24,fill:'#1F2622','text-anchor':'middle'},a||{}));e.textContent=s;return e}
+const x0=70,x1=1060,base=500,y0=90,lo=21.5,hi=51.5,X=m=>x0+(m-lo)/(hi-lo)*(x1-x0),Y=v=>base-v/15*(base-y0),bw=(x1-x0)/30-5;
+const tot=D.reduce((s,v)=>s+v,0),mean=D.reduce((s,v,i)=>s+v*(22+i),0)/tot;
+[0,5,10,15].forEach(v=>{el('line',{x1:x0,x2:x1,y1:Y(v),y2:Y(v),stroke:'#D6CAB6'});tx(x0-12,Y(v)+8,v,{'text-anchor':'end',fill:'#7A6F60'})});
+D.forEach((v,i)=>{const m=22+i,ok=m>=25&&m<=45;if(v)el('rect',{x:X(m)-bw/2,y:Y(v),width:bw,height:base-Y(v),fill:ok?'#A89C88':'#B9482F',class:'b',style:`animation-delay:${i*.05}s`})});
+el('line',{x1:x0,x2:x1,y1:base,y2:base,stroke:'#1F2622','stroke-width':2});
+[25,30,35,40,45,50].forEach(m=>tx(X(m),base+38,m,{fill:'#5B5348'}));
+tx((x0+x1)/2,base+80,'Minutos por habitación (161 habitaciones)',{fill:'#5B5348'});
+[[24.5,'LEI 25'],[45.5,'LES 45']].forEach((l,i)=>{el('line',{x1:X(l[0]),x2:X(l[0]),y1:y0-40,y2:base,stroke:'#1F2622','stroke-width':2,'stroke-dasharray':'8 6',class:'f',style:'animation-delay:1.6s'});
+tx(X(l[0])+(i?12:-12),y0-48,l[1],{'text-anchor':i?'start':'end','font-weight':700,class:'f',style:'animation-delay:1.6s'})});
+el('line',{x1:X(mean),x2:X(mean),y1:y0-10,y2:base,stroke:'#3D6B4F','stroke-width':3,class:'f',style:'animation-delay:2.1s'});
+tx(X(mean)+10,y0+18,'Media '+mean.toFixed(1).replace('.',',')+' min',{'text-anchor':'start','font-weight':700,fill:'#3D6B4F',class:'f',style:'animation-delay:2.1s'});
+tx(x1,Y(9),'6 fuera de rango',{'text-anchor':'end','font-weight':700,fill:'#B9482F',class:'f',style:'animation-delay:2.5s'});
+</script></body></html>

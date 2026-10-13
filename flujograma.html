@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flujograma animado · Hotel Río Blanco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=DM+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: una columna centrada; el diagrama ocupa el ancho y escala con su viewBox */
+:root{--bg:#F4EEE3;--panel:#FBF7F0;--ink:#1F2622;--muted:#5B5348;--terra:#B9482F;--ok:#3D6B4F;--line:#DED3C1;
+--display:'Fraunces',Georgia,serif;--body:'DM Sans',Arial,sans-serif;color-scheme:light}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);padding-inline:16px}
+.fl{max-width:1180px;margin-inline:auto;padding-block:32px 48px;display:flex;flex-direction:column;gap:20px}
+.fl-eye{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--terra);font-weight:700;margin:0}
+.fl h1{font-family:var(--display);font-weight:600;font-size:clamp(26px,4vw,42px);line-height:1.1;margin:0;text-wrap:balance}
+.fl-lead{color:var(--muted);font-size:16px;line-height:1.5;margin:0;max-width:65ch}
+.fl-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.fl-tab,.fl-btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer}
+.fl-tab[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.fl-tab:focus-visible,.fl-btn:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
+.fl-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;overflow-x:auto}
+#top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;align-items:baseline;margin-bottom:8px}
+#mode{font-size:clamp(17px,2.2vw,24px);font-weight:700}#cnt{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+#s{width:100%;height:auto;min-width:640px;display:block}
+#msg{font-size:15px;color:var(--muted);margin-top:8px}
+</style>
+</head><body>
+<main class="fl">
+<a href="index.html" style="color:var(--muted);font-size:14px">← Volver a la presentación</a>
+<p class="fl-eye">Hotel Río Blanco · Gestión de la Calidad</p>
+<h1>Cómo viaja una habitación del check-out al check-in</h1>
+<p class="fl-lead">Cada círculo es una habitación en preparación. Compara el proceso de hoy, sin inspección final, con el propuesto, donde la supervisora revisa cada habitación con un checklist antes de liberarla. Hoy, 22 de cada 100 habitaciones salen con algún defecto.</p>
+<div class="fl-bar" role="group" aria-label="Vista del proceso">
+<button class="fl-tab" id="b0" aria-pressed="true">Proceso actual</button>
+<button class="fl-tab" id="b1" aria-pressed="false">Proceso propuesto</button>
+<button class="fl-btn" id="bauto">Alternar solo: sí</button>
+</div>
+<section class="fl-card">
+<div id="top"><div id="mode"></div><div id="cnt"></div></div>
+<svg id="s" viewBox="0 0 1664 480" role="img" aria-label="Flujograma animado del proceso de preparación de habitaciones"></svg>
+<div id="msg"></div>
+</section>
+</main>
+<script>
+let auto=true;
+
+const S=document.getElementById('s'),NS='http://www.w3.org/2000/svg',M=document.getElementById('mode'),C=document.getElementById('cnt'),G=document.getElementById('msg');
+const X=i=>104+i*208,TY=260,TERRA='#B9482F',OK='#3D6B4F',NEU='#8A7F6E';
+const st=[['Check-out','',0],['Aviso a','limpieza',0],['Ropa blanca','PCC-1',1],['Limpiar baño','y habitación',1],['Cama y','art. de aseo',1],['Inspección','PCC-2',2],['Liberar','habitación',2],['Check-in','del huésped',0]];
+const roles=['Recepción','Limpieza','Supervisora'],rc=['#5B6B63','#9A6E14','#3D6B4F'];
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||S).appendChild(e);return e}
+function tx(x,y,s,a,p){const e=el('text',Object.assign({x,y,'text-anchor':'middle','font-size':24,fill:'#1F2622'},a||{}),p);e.textContent=s;return e}
+el('line',{x1:X(0),x2:X(7),y1:TY,y2:TY,stroke:'#CBBFAB','stroke-width':5,'stroke-linecap':'round'});
+const loop=el('path',{d:`M${X(5)} ${TY}V370H${X(3)}V${TY}`,fill:'none',stroke:TERRA,'stroke-width':3,'stroke-dasharray':'10 8'});
+const loopT=tx((X(3)+X(5))/2,408,'Corregir y volver a inspeccionar',{fill:TERRA,'font-weight':600});
+let g5,r5;
+st.forEach((s,i)=>{const g=el('g',{});const r=el('rect',{x:X(i)-96,y:30,width:192,height:100,rx:14,fill:(i==2||i==5)?'#F3DFB4':'#FBF7F0',stroke:'#1F2622','stroke-width':2},g);
+tx(X(i),s[1]?72:88,s[0],{'font-weight':700},g);if(s[1])tx(X(i),104,s[1],{},g);tx(X(i),172,roles[s[2]],{fill:rc[s[2]],'font-weight':600},g);
+el('line',{x1:X(i),x2:X(i),y1:186,y2:TY-10,stroke:'#CBBFAB','stroke-width':2},g);if(i==5){g5=g;r5=r}});
+const no=tx(X(5),222,'No existe hoy',{fill:TERRA,'font-weight':700});
+const pop=tx(X(7),330,'¡Reclamo!',{fill:TERRA,'font-weight':700,'font-size':32,opacity:0});
+[[NEU,'Habitación en preparación'],[TERRA,'Con defecto'],[OK,'Verificada y lista']].forEach((l,i)=>{el('circle',{cx:40+i*420,cy:458,r:14,fill:l[0]});tx(64+i*420,466,l[1],{'text-anchor':'start'})});
+let mode=0,t0=performance.now(),last=t0,acc=0,k=0,toks=[],n=0,d=0,c=0,popT=-9;
+function setMode(m){mode=m;document.querySelectorAll('.fl-tab').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===m)));toks.forEach(o=>o.e.remove());toks=[];n=d=c=0;acc=0;
+g5.setAttribute('opacity',m?1:.35);r5.setAttribute('stroke-dasharray',m?'':'8 6');no.setAttribute('opacity',m?0:1);loop.setAttribute('opacity',m?1:0);loopT.setAttribute('opacity',m?1:0);
+M.textContent=m?'Proceso propuesto: con inspección final':'Proceso actual: sin inspección final';M.style.color=m?OK:TERRA;
+G.textContent=m?'Los defectos se detectan en la inspección (PCC-2) y vuelven a limpieza antes del check-in.':'Sin revisión final, 22 de cada 100 habitaciones llegan al huésped con defectos.'}
+setMode(0);
+const v=200,L=110+416+110;
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+if(auto&&now-t0>17000){setMode(1-mode);t0=now}
+acc+=dt;if(acc>.9){acc=0;k++;const def=Math.floor(k*.224)>Math.floor((k-1)*.224);toks.push({x:X(0),y:TY,seg:-1,def,fix:0,ok:0,sh:0,e:el('circle',{cx:X(0),cy:TY,r:16,fill:NEU})})}
+for(let i=toks.length-1;i>=0;i--){const o=toks[i];
+if(o.seg<0){o.x+=v*dt;o.y=TY;
+if(o.def&&!o.sh&&o.x>=X(3)){o.sh=1;o.e.setAttribute('fill',TERRA)}
+if(mode==1&&o.def&&o.x>=X(5)){o.x=X(5);o.seg=0;o.p=0}
+else if(mode==1&&!o.ok&&o.x>=X(5)){o.ok=1;o.e.setAttribute('fill',OK)}
+if(o.x>=X(7)){n++;if(o.def){d++;popT=now}o.e.remove();toks.splice(i,1);continue}}
+else{o.p+=v*dt;const p=o.p;
+if(p<110){o.x=X(5);o.y=TY+p}else if(p<526){o.x=X(5)-(p-110);o.y=370}else if(p<L){o.x=X(3);o.y=370-(p-526)}
+else{o.seg=-1;o.x=X(3);o.y=TY;o.def=false;c++;o.e.setAttribute('fill',NEU)}}
+o.e.setAttribute('cx',o.x);o.e.setAttribute('cy',o.y)}
+const a=Math.max(0,1-(now-popT)/1200);pop.setAttribute('opacity',mode?0:a);
+C.textContent=mode?`Entregadas ${n} · corregidas ${c} · con defecto 0`:`Entregadas ${n} · con defecto ${d}`+(n?` (${Math.round(d/n*100)}%)`:'');
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+
+document.getElementById('b0').addEventListener('click',()=>{setMode(0);t0=performance.now()});
+document.getElementById('b1').addEventListener('click',()=>{setMode(1);t0=performance.now()});
+document.getElementById('bauto').addEventListener('click',e=>{auto=!auto;t0=performance.now();e.target.textContent='Alternar solo: '+(auto?'sí':'no')});
+setMode(mode);
+</script>
+</body></html>

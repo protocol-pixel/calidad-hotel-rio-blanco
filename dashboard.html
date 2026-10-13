@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard de calidad · Hotel Río Blanco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=DM+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{--color-fg:#1F2622;--color-fg-muted:#5B5348;--color-bg:#F4EEE3;--color-panel:#FBF7F0;--color-border-line:#DED3C1;--color-ok:#3D6B4F;--color-warn:#9A6E14;--color-bad:#B9482F;
+--font-anthropic-sans:'DM Sans',Arial,sans-serif;--font-anthropic-serif:'Fraunces',Georgia,serif;
+--cds-font-size-caption:13px;--cds-font-size-body:15px;--cds-font-size-heading:18px;--cds-font-size-title:34px;--cds-font-weight-medium:600;
+--cds-gap-sm:8px;--cds-gap-md:16px;--cds-gap-lg:28px;--cds-pad-xs:6px;--cds-pad-sm:10px;--cds-pad-lg:20px;--cds-radius:14px;
+--cds-chart-grid:#E6DCCB;--cds-chart-axis:#8A7F6E;--cds-chart-reference:#7A6F60;--cds-chart-muted:#BFB29E;--cds-chart-status-critical:#B9482F;
+--cds-surface-popover:#FFFDF8;--cds-border:#DED3C1;--cds-shadow-popover:0 6px 20px rgba(31,38,34,.12);--cds-text-secondary:#5B5348;--cds-dur-slow:.4s;color-scheme:light}
+html,body{background:var(--color-bg);color:var(--color-fg);margin:0}
+body{font-family:var(--font-anthropic-sans);padding:32px 16px 48px}
+#dash-root{max-width:1240px;margin-inline:auto}
+.rb-volver{display:inline-block;margin-bottom:16px;color:var(--color-fg-muted);font-size:14px}
+.rb .dash-skeleton{color:transparent;background:var(--color-border-line);border-radius:8px}
+.rb-seg button:focus-visible,.rb-picked:focus-visible{outline:2px solid var(--color-bad);outline-offset:2px}
+</style>
+<script src="lib/d3.min.js"></script>
+<script>
+window.DATA={"dias":[{"fecha":"2026-09-01","dia":"Mar","semana":1,"tipo":"Entre semana","preparadas":9,"no_conformes":1,"no_conformidades":1},{"fecha":"2026-09-02","dia":"Mié","semana":1,"tipo":"Entre semana","preparadas":8,"no_conformes":1,"no_conformidades":1},{"fecha":"2026-09-03","dia":"Jue","semana":1,"tipo":"Entre semana","preparadas":10,"no_conformes":1,"no_conformidades":2},{"fecha":"2026-09-04","dia":"Vie","semana":1,"tipo":"Fin de semana","preparadas":14,"no_conformes":3,"no_conformidades":4},{"fecha":"2026-09-05","dia":"Sáb","semana":1,"tipo":"Fin de semana","preparadas":16,"no_conformes":5,"no_conformidades":8},{"fecha":"2026-09-06","dia":"Dom","semana":1,"tipo":"Fin de semana","preparadas":13,"no_conformes":3,"no_conformidades":4},{"fecha":"2026-09-07","dia":"Lun","semana":1,"tipo":"Entre semana","preparadas":9,"no_conformes":1,"no_conformidades":1},{"fecha":"2026-09-08","dia":"Mar","semana":2,"tipo":"Entre semana","preparadas":10,"no_conformes":1,"no_conformidades":1},{"fecha":"2026-09-09","dia":"Mié","semana":2,"tipo":"Entre semana","preparadas":9,"no_conformes":1,"no_conformidades":1},{"fecha":"2026-09-10","dia":"Jue","semana":2,"tipo":"Entre semana","preparadas":11,"no_conformes":2,"no_conformidades":3},{"fecha":"2026-09-11","dia":"Vie","semana":2,"tipo":"Fin de semana","preparadas":15,"no_conformes":4,"no_conformidades":6},{"fecha":"2026-09-12","dia":"Sáb","semana":2,"tipo":"Fin de semana","preparadas":17,"no_conformes":10,"no_conformidades":15},{"fecha":"2026-09-13","dia":"Dom","semana":2,"tipo":"Fin de semana","preparadas":12,"no_conformes":2,"no_conformidades":3},{"fecha":"2026-09-14","dia":"Lun","semana":2,"tipo":"Entre semana","preparadas":8,"no_conformes":1,"no_conformidades":1}],"fallas":[{"fecha":"2026-09-03","codigo":"A","categoria":"Faltante de artículos de aseo","cantidad":1},{"fecha":"2026-09-04","codigo":"A","categoria":"Faltante de artículos de aseo","cantidad":2},{"fecha":"2026-09-05","codigo":"A","categoria":"Faltante de artículos de aseo","cantidad":3},{"fecha":"2026-09-06","codigo":"A","categoria":"Faltante de artículos de aseo","cantidad":1},{"fecha":"2026-09-11","codigo":"A","categoria":"Faltante de artículos de aseo","cantidad":2},{"fecha":"2026-09-12","codigo":"A","categoria":"Faltante de artículos de aseo","cantidad":6},{"fecha":"2026-09-13","codigo":"A","categoria":"Faltante de artículos de aseo","cantidad":1},{"fecha":"2026-09-14","codigo":"A","categoria":"Faltante de artículos de aseo","cantidad":1},{"fecha":"2026-09-01","codigo":"B","categoria":"Limpieza deficiente del baño","cantidad":1},{"fecha":"2026-09-04","codigo":"B","categoria":"Limpieza deficiente del baño","cantidad":1},{"fecha":"2026-09-06","codigo":"B","categoria":"Limpieza deficiente del baño","cantidad":3},{"fecha":"2026-09-07","codigo":"B","categoria":"Limpieza deficiente del baño","cantidad":1},{"fecha":"2026-09-10","codigo":"B","categoria":"Limpieza deficiente del baño","cantidad":1},{"fecha":"2026-09-11","codigo":"B","categoria":"Limpieza deficiente del baño","cantidad":1},{"fecha":"2026-09-12","codigo":"B","categoria":"Limpieza deficiente del baño","cantidad":3},{"fecha":"2026-09-13","codigo":"B","categoria":"Limpieza deficiente del baño","cantidad":1},{"fecha":"2026-09-03","codigo":"C","categoria":"Habitación no lista al check-in","cantidad":1},{"fecha":"2026-09-05","codigo":"C","categoria":"Habitación no lista al check-in","cantidad":2},{"fecha":"2026-09-09","codigo":"C","categoria":"Habitación no lista al check-in","cantidad":1},{"fecha":"2026-09-11","codigo":"C","categoria":"Habitación no lista al check-in","cantidad":2},{"fecha":"2026-09-12","codigo":"C","categoria":"Habitación no lista al check-in","cantidad":3},{"fecha":"2026-09-02","codigo":"D","categoria":"Ropa de cama con defectos","cantidad":1},{"fecha":"2026-09-04","codigo":"D","categoria":"Ropa de cama con defectos","cantidad":1},{"fecha":"2026-09-05","codigo":"D","categoria":"Ropa de cama con defectos","cantidad":1},{"fecha":"2026-09-08","codigo":"D","categoria":"Ropa de cama con defectos","cantidad":1},{"fecha":"2026-09-12","codigo":"D","categoria":"Ropa de cama con defectos","cantidad":1},{"fecha":"2026-09-13","codigo":"D","categoria":"Ropa de cama con defectos","cantidad":1},{"fecha":"2026-09-05","codigo":"E","categoria":"Desperfecto no reportado","cantidad":1},{"fecha":"2026-09-11","codigo":"E","categoria":"Desperfecto no reportado","cantidad":1},{"fecha":"2026-09-12","codigo":"E","categoria":"Desperfecto no reportado","cantidad":2},{"fecha":"2026-09-05","codigo":"F","categoria":"Error de asignación en recepción","cantidad":1},{"fecha":"2026-09-10","codigo":"F","categoria":"Error de asignación en recepción","cantidad":1},{"fecha":"2026-09-10","codigo":"G","categoria":"Reclamo no registrado","cantidad":1}],"tiempos":[{"habitacion":1,"fecha":"2026-09-01","minutos":32},{"habitacion":2,"fecha":"2026-09-01","minutos":33},{"habitacion":3,"fecha":"2026-09-01","minutos":37},{"habitacion":4,"fecha":"2026-09-01","minutos":35},{"habitacion":5,"fecha":"2026-09-01","minutos":31},{"habitacion":6,"fecha":"2026-09-01","minutos":29},{"habitacion":7,"fecha":"2026-09-01","minutos":31},{"habitacion":8,"fecha":"2026-09-01","minutos":40},{"habitacion":9,"fecha":"2026-09-01","minutos":29},{"habitacion":10,"fecha":"2026-09-02","minutos":35},{"habitacion":11,"fecha":"2026-09-02","minutos":36},{"habitacion":12,"fecha":"2026-09-02","minutos":26},{"habitacion":13,"fecha":"2026-09-02","minutos":34},{"habitacion":14,"fecha":"2026-09-02","minutos":40},{"habitacion":15,"fecha":"2026-09-02","minutos":23},{"habitacion":16,"fecha":"2026-09-02","minutos":32},{"habitacion":17,"fecha":"2026-09-02","minutos":33},{"habitacion":18,"fecha":"2026-09-03","minutos":29},{"habitacion":19,"fecha":"2026-09-03","minutos":36},{"habitacion":20,"fecha":"2026-09-03","minutos":33},{"habitacion":21,"fecha":"2026-09-03","minutos":26},{"habitacion":22,"fecha":"2026-09-03","minutos":38},{"habitacion":23,"fecha":"2026-09-03","minutos":37},{"habitacion":24,"fecha":"2026-09-03","minutos":38},{"habitacion":25,"fecha":"2026-09-03","minutos":41},{"habitacion":26,"fecha":"2026-09-03","minutos":35},{"habitacion":27,"fecha":"2026-09-03","minutos":34},{"habitacion":28,"fecha":"2026-09-04","minutos":31},{"habitacion":29,"fecha":"2026-09-04","minutos":41},{"habitacion":30,"fecha":"2026-09-04","minutos":34},{"habitacion":31,"fecha":"2026-09-04","minutos":35},{"habitacion":32,"fecha":"2026-09-04","minutos":31},{"habitacion":33,"fecha":"2026-09-04","minutos":33},{"habitacion":34,"fecha":"2026-09-04","minutos":35},{"habitacion":35,"fecha":"2026-09-04","minutos":44},{"habitacion":36,"fecha":"2026-09-04","minutos":27},{"habitacion":37,"fecha":"2026-09-04","minutos":30},{"habitacion":38,"fecha":"2026-09-04","minutos":39},{"habitacion":39,"fecha":"2026-09-04","minutos":45},{"habitacion":40,"fecha":"2026-09-04","minutos":40},{"habitacion":41,"fecha":"2026-09-04","minutos":28},{"habitacion":42,"fecha":"2026-09-05","minutos":25},{"habitacion":43,"fecha":"2026-09-05","minutos":39},{"habitacion":44,"fecha":"2026-09-05","minutos":34},{"habitacion":45,"fecha":"2026-09-05","minutos":32},{"habitacion":46,"fecha":"2026-09-05","minutos":42},{"habitacion":47,"fecha":"2026-09-05","minutos":43},{"habitacion":48,"fecha":"2026-09-05","minutos":38},{"habitacion":49,"fecha":"2026-09-05","minutos":39},{"habitacion":50,"fecha":"2026-09-05","minutos":40},{"habitacion":51,"fecha":"2026-09-05","minutos":45},{"habitacion":52,"fecha":"2026-09-05","minutos":41},{"habitacion":53,"fecha":"2026-09-05","minutos":40},{"habitacion":54,"fecha":"2026-09-05","minutos":40},{"habitacion":55,"fecha":"2026-09-05","minutos":30},{"habitacion":56,"fecha":"2026-09-05","minutos":44},{"habitacion":57,"fecha":"2026-09-05","minutos":42},{"habitacion":58,"fecha":"2026-09-06","minutos":40},{"habitacion":59,"fecha":"2026-09-06","minutos":28},{"habitacion":60,"fecha":"2026-09-06","minutos":34},{"habitacion":61,"fecha":"2026-09-06","minutos":42},{"habitacion":62,"fecha":"2026-09-06","minutos":28},{"habitacion":63,"fecha":"2026-09-06","minutos":37},{"habitacion":64,"fecha":"2026-09-06","minutos":43},{"habitacion":65,"fecha":"2026-09-06","minutos":31},{"habitacion":66,"fecha":"2026-09-06","minutos":46},{"habitacion":67,"fecha":"2026-09-06","minutos":40},{"habitacion":68,"fecha":"2026-09-06","minutos":37},{"habitacion":69,"fecha":"2026-09-06","minutos":39},{"habitacion":70,"fecha":"2026-09-06","minutos":41},{"habitacion":71,"fecha":"2026-09-07","minutos":34},{"habitacion":72,"fecha":"2026-09-07","minutos":39},{"habitacion":73,"fecha":"2026-09-07","minutos":30},{"habitacion":74,"fecha":"2026-09-07","minutos":31},{"habitacion":75,"fecha":"2026-09-07","minutos":39},{"habitacion":76,"fecha":"2026-09-07","minutos":34},{"habitacion":77,"fecha":"2026-09-07","minutos":29},{"habitacion":78,"fecha":"2026-09-07","minutos":38},{"habitacion":79,"fecha":"2026-09-07","minutos":41},{"habitacion":80,"fecha":"2026-09-08","minutos":31},{"habitacion":81,"fecha":"2026-09-08","minutos":27},{"habitacion":82,"fecha":"2026-09-08","minutos":33},{"habitacion":83,"fecha":"2026-09-08","minutos":33},{"habitacion":84,"fecha":"2026-09-08","minutos":32},{"habitacion":85,"fecha":"2026-09-08","minutos":41},{"habitacion":86,"fecha":"2026-09-08","minutos":28},{"habitacion":87,"fecha":"2026-09-08","minutos":40},{"habitacion":88,"fecha":"2026-09-08","minutos":27},{"habitacion":89,"fecha":"2026-09-08","minutos":30},{"habitacion":90,"fecha":"2026-09-09","minutos":37},{"habitacion":91,"fecha":"2026-09-09","minutos":39},{"habitacion":92,"fecha":"2026-09-09","minutos":38},{"habitacion":93,"fecha":"2026-09-09","minutos":35},{"habitacion":94,"fecha":"2026-09-09","minutos":34},{"habitacion":95,"fecha":"2026-09-09","minutos":34},{"habitacion":96,"fecha":"2026-09-09","minutos":36},{"habitacion":97,"fecha":"2026-09-09","minutos":33},{"habitacion":98,"fecha":"2026-09-09","minutos":35},{"habitacion":99,"fecha":"2026-09-10","minutos":36},{"habitacion":100,"fecha":"2026-09-10","minutos":34},{"habitacion":101,"fecha":"2026-09-10","minutos":37},{"habitacion":102,"fecha":"2026-09-10","minutos":36},{"habitacion":103,"fecha":"2026-09-10","minutos":44},{"habitacion":104,"fecha":"2026-09-10","minutos":35},{"habitacion":105,"fecha":"2026-09-10","minutos":31},{"habitacion":106,"fecha":"2026-09-10","minutos":32},{"habitacion":107,"fecha":"2026-09-10","minutos":33},{"habitacion":108,"fecha":"2026-09-10","minutos":38},{"habitacion":109,"fecha":"2026-09-10","minutos":32},{"habitacion":110,"fecha":"2026-09-11","minutos":39},{"habitacion":111,"fecha":"2026-09-11","minutos":47},{"habitacion":112,"fecha":"2026-09-11","minutos":25},{"habitacion":113,"fecha":"2026-09-11","minutos":32},{"habitacion":114,"fecha":"2026-09-11","minutos":39},{"habitacion":115,"fecha":"2026-09-11","minutos":39},{"habitacion":116,"fecha":"2026-09-11","minutos":39},{"habitacion":117,"fecha":"2026-09-11","minutos":35},{"habitacion":118,"fecha":"2026-09-11","minutos":41},{"habitacion":119,"fecha":"2026-09-11","minutos":39},{"habitacion":120,"fecha":"2026-09-11","minutos":35},{"habitacion":121,"fecha":"2026-09-11","minutos":50},{"habitacion":122,"fecha":"2026-09-11","minutos":39},{"habitacion":123,"fecha":"2026-09-11","minutos":35},{"habitacion":124,"fecha":"2026-09-11","minutos":37},{"habitacion":125,"fecha":"2026-09-12","minutos":39},{"habitacion":126,"fecha":"2026-09-12","minutos":40},{"habitacion":127,"fecha":"2026-09-12","minutos":26},{"habitacion":128,"fecha":"2026-09-12","minutos":38},{"habitacion":129,"fecha":"2026-09-12","minutos":45},{"habitacion":130,"fecha":"2026-09-12","minutos":34},{"habitacion":131,"fecha":"2026-09-12","minutos":40},{"habitacion":132,"fecha":"2026-09-12","minutos":45},{"habitacion":133,"fecha":"2026-09-12","minutos":44},{"habitacion":134,"fecha":"2026-09-12","minutos":47},{"habitacion":135,"fecha":"2026-09-12","minutos":31},{"habitacion":136,"fecha":"2026-09-12","minutos":38},{"habitacion":137,"fecha":"2026-09-12","minutos":38},{"habitacion":138,"fecha":"2026-09-12","minutos":43},{"habitacion":139,"fecha":"2026-09-12","minutos":45},{"habitacion":140,"fecha":"2026-09-12","minutos":27},{"habitacion":141,"fecha":"2026-09-12","minutos":45},{"habitacion":142,"fecha":"2026-09-13","minutos":30},{"habitacion":143,"fecha":"2026-09-13","minutos":41},{"habitacion":144,"fecha":"2026-09-13","minutos":30},{"habitacion":145,"fecha":"2026-09-13","minutos":38},{"habitacion":146,"fecha":"2026-09-13","minutos":43},{"habitacion":147,"fecha":"2026-09-13","minutos":37},{"habitacion":148,"fecha":"2026-09-13","minutos":38},{"habitacion":149,"fecha":"2026-09-13","minutos":41},{"habitacion":150,"fecha":"2026-09-13","minutos":38},{"habitacion":151,"fecha":"2026-09-13","minutos":37},{"habitacion":152,"fecha":"2026-09-13","minutos":45},{"habitacion":153,"fecha":"2026-09-13","minutos":43},{"habitacion":154,"fecha":"2026-09-14","minutos":32},{"habitacion":155,"fecha":"2026-09-14","minutos":47},{"habitacion":156,"fecha":"2026-09-14","minutos":28},{"habitacion":157,"fecha":"2026-09-14","minutos":38},{"habitacion":158,"fecha":"2026-09-14","minutos":32},{"habitacion":159,"fecha":"2026-09-14","minutos":34},{"habitacion":160,"fecha":"2026-09-14","minutos":37},{"habitacion":161,"fecha":"2026-09-14","minutos":35}]};
+window.dash=(()=>{const calcs={},cache={},subs=[];const params={tipo:'todos',dia:null};
+const get=id=>{if(DATA[id])return DATA[id];if(!(id in cache)){const c=calcs[id];cache[id]=c.fn(...c.inputs.map(get));}return cache[id];};
+const run=()=>subs.forEach(f=>{try{f()}catch(e){console.error(e)}});
+let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(run,150)});
+return {calc(id,o){calcs[id]=o},data(id){return {status:'ok',data:get(id),refreshing:false}},onData(f){subs.push(f);requestAnimationFrame(()=>f())},
+params(){return {...params}},setParams(p){Object.assign(params,p);run()},resetParams(){params.tipo='todos';params.dia=null;run()},colors:[]};})();
+</script>
+</head>
+<body>
+<div id="dash-root">
+<a class="rb-volver" href="index.html">← Volver a la presentación</a>
+<style>
+.rb{display:flex;flex-direction:column;gap:var(--cds-gap-lg);font-family:var(--font-anthropic-sans)}
+.rb-title{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);margin:0}
+.rb-take{color:var(--color-fg-muted);margin:6px 0 0;font-size:var(--cds-font-size-body)}
+.rb-ctrl{display:flex;flex-wrap:wrap;gap:var(--cds-gap-sm);align-items:center}
+.rb-seg{display:inline-flex;border:1px solid var(--color-border-line);border-radius:999px;overflow:hidden}
+.rb-seg button{border:0;background:transparent;color:var(--color-fg);padding:6px 14px;font:inherit;font-size:var(--cds-font-size-caption);cursor:pointer}
+.rb-seg button[aria-pressed=true]{background:#B9482F;color:#FBF7F0}
+.rb-picked{border:1px solid #B9482F;color:#B9482F;background:transparent;border-radius:999px;padding:6px 12px;font:inherit;font-size:var(--cds-font-size-caption);cursor:pointer}
+.rb-sel{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.rb-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));gap:var(--cds-gap-md)}
+.rb-card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg);position:relative}
+.rb-kl{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.rb-kv{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);font-variant-numeric:tabular-nums;margin:6px 0}
+.rb-kn{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.rb-kv.bad{color:var(--color-bad)}.rb-kv.good{color:var(--color-ok)}
+.rb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,26rem),1fr));gap:var(--cds-gap-md)}
+.rb-wide{grid-column:1/-1}
+.rb-h{font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);margin:0}
+.rb-note{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);margin:4px 0 12px}
+.rb-chart{min-height:300px}
+.rb-tip{position:absolute;pointer-events:none;background:var(--cds-surface-popover);border:1px solid var(--cds-border);border-radius:var(--cds-radius);box-shadow:var(--cds-shadow-popover);padding:var(--cds-pad-xs) var(--cds-pad-sm);font-size:var(--cds-font-size-caption);display:none;white-space:nowrap;z-index:2}
+.rb-tip div:first-child{color:var(--cds-text-secondary)}
+.rb svg text{fill:var(--color-fg-muted);font-size:12px;font-family:var(--font-anthropic-sans)}
+.rb svg text.rb-strong{fill:var(--color-fg);font-weight:600}
+.rb [data-dash-source-state=refreshing]{opacity:.5;transition:opacity var(--cds-dur-slow)}
+.rb [data-dash-source-state=empty]{color:transparent}
+</style>
+<div class="rb">
+<header id="encabezado">
+<h1 class="rb-title">Calidad en la preparación de habitaciones</h1>
+<p class="rb-take">Hotel Río Blanco, Piura · 1 al 14 de septiembre de 2026. Elige un tipo de día o haz clic en un día de la gráfica p: todas las tarjetas se recalculan.</p>
+</header>
+<div class="rb-ctrl" id="filtros">
+<div class="rb-seg" role="group" aria-label="Tipo de día"><button data-t="todos">Todos los días</button><button data-t="Entre semana">Entre semana</button><button data-t="Fin de semana">Fin de semana</button></div>
+<button class="rb-picked" hidden></button>
+<span class="rb-sel"></span>
+</div>
+<section class="rb-kpis" id="indicadores">
+<div class="rb-card"><div class="rb-kl">Habitaciones no conformes</div><div class="rb-kv dash-skeleton" data-source="resumen" data-field="p_txt">—</div><div class="rb-kn">Meta: menos de 8%</div></div>
+<div class="rb-card"><div class="rb-kl">Habitaciones preparadas</div><div class="rb-kv dash-skeleton" data-source="resumen" data-field="preparadas">—</div><div class="rb-kn">Que cambiaron de huésped</div></div>
+<div class="rb-card"><div class="rb-kl">No conformidades</div><div class="rb-kv dash-skeleton" data-source="resumen" data-field="no_conformidades">—</div><div class="rb-kn">Una habitación puede tener varias</div></div>
+<div class="rb-card"><div class="rb-kl">Tiempo medio (min)</div><div class="rb-kv dash-skeleton" data-source="resumen" data-field="tiempo_txt">—</div><div class="rb-kn">Rango aceptable: 25 a 45 min</div></div>
+<div class="rb-card"><div class="rb-kl">Capacidad Cpk</div><div class="rb-kv dash-skeleton" data-source="resumen" data-field="cpk_txt">—</div><div class="rb-kn">Meta: 1,0 o más</div></div>
+</section>
+<div class="rb-grid">
+<section class="rb-card rb-wide" id="grafica-p"><h2 class="rb-h">Gráfica de control p</h2><p class="rb-note">Proporción diaria de habitaciones no conformes. Línea punteada: límite superior de cada día. Haz clic en un día para filtrar.</p><div class="rb-chart dash-skeleton" id="c-p" data-source="control dias"></div><div class="rb-tip"></div></section>
+<section class="rb-card" id="pareto"><h2 class="rb-h">Pareto de no conformidades</h2><p class="rb-note">En color, las categorías que juntas llegan hasta el 80%.</p><div class="rb-chart dash-skeleton" id="c-pa" data-source="pareto"></div><div class="rb-tip"></div></section>
+<section class="rb-card" id="histograma"><h2 class="rb-h">Tiempo de preparación</h2><p class="rb-note">Habitaciones por minuto. En rojo, fuera de 25 a 45 min.</p><div class="rb-chart dash-skeleton" id="c-h" data-source="tiempos resumen"></div><div class="rb-tip"></div></section>
+<section class="rb-card rb-wide" id="dispersion"><h2 class="rb-h">Carga diaria vs. no conformidades</h2><p class="rb-note">Cada punto es un día; en color, los de la selección. Correlación r = <span data-source="regresion" data-field="r_txt" data-row="0">—</span>.</p><div class="rb-chart dash-skeleton" id="c-d" data-source="dias regresion"></div><div class="rb-tip"></div></section>
+</div>
+</div>
+<script>
+const SEL_GROUPS=(dias)=>[['todos',()=>true],['Entre semana',r=>r.tipo==='Entre semana'],['Fin de semana',r=>r.tipo==='Fin de semana'],...dias.map(d=>[d.fecha,r=>r.fecha===d.fecha])];
+window.SEL_GROUPS=SEL_GROUPS;
+dash.calc('resumen',{inputs:['dias','fallas','tiempos'],title:'Resumen por selección',description:'Totales, proporción de no conformes, tiempo medio y Cpk (límites 25 y 45 min) por día, por tipo de día y del periodo.',fn:(dias,fallas,tiempos)=>{
+const grupos=[['todos',()=>true],['Entre semana',r=>r.tipo==='Entre semana'],['Fin de semana',r=>r.tipo==='Fin de semana'],...dias.map(d=>[d.fecha,r=>r.fecha===d.fecha])];
+return grupos.map(([g,f])=>{const ds=dias.filter(f),set=new Set(ds.map(d=>d.fecha));
+const prep=ds.reduce((s,d)=>s+Number(d.preparadas),0),nc=ds.reduce((s,d)=>s+Number(d.no_conformes),0),ncs=ds.reduce((s,d)=>s+Number(d.no_conformidades),0);
+const t=tiempos.filter(x=>set.has(x.fecha)).map(x=>Number(x.minutos)),n=t.length,mean=t.reduce((s,v)=>s+v,0)/n;
+const sd=Math.sqrt(t.reduce((s,v)=>s+(v-mean)**2,0)/(n-1)),cpk=Math.min(45-mean,mean-25)/(3*sd),p=nc/prep;
+return {grupo:g,preparadas:prep,no_conformes:nc,no_conformidades:ncs,p,p_txt:(p*100).toFixed(1).replace('.',',')+'%',tiempo_medio:mean,tiempo_txt:mean.toFixed(1).replace('.',','),cp:20/(6*sd),cpk,cpk_txt:cpk.toFixed(2).replace('.',','),fuera:t.filter(v=>v<25||v>45).length}})}});
+dash.calc('pareto',{inputs:['dias','fallas'],title:'Pareto por selección',description:'No conformidades por categoría, de mayor a menor, con su porcentaje acumulado.',fn:(dias,fallas)=>{const out=[];
+const grupos=[['todos',()=>true],['Entre semana',r=>r.tipo==='Entre semana'],['Fin de semana',r=>r.tipo==='Fin de semana'],...dias.map(d=>[d.fecha,r=>r.fecha===d.fecha])];
+grupos.forEach(([g,f])=>{const set=new Set(dias.filter(f).map(d=>d.fecha)),m=new Map();
+fallas.filter(x=>set.has(x.fecha)).forEach(x=>{const o=m.get(x.codigo)||{codigo:x.codigo,categoria:x.categoria,cantidad:0};o.cantidad+=Number(x.cantidad);m.set(x.codigo,o)});
+const rows=[...m.values()].sort((a,b)=>b.cantidad-a.cantidad||a.codigo.localeCompare(b.codigo)),tot=rows.reduce((s,r)=>s+r.cantidad,0);let c=0;
+rows.forEach(r=>{const antes=c/tot;c+=r.cantidad;out.push({grupo:g,codigo:r.codigo,categoria:r.categoria,cantidad:r.cantidad,pct:r.cantidad/tot,acumulado:c/tot,vital:antes<0.8})})});return out}});
+dash.calc('control',{inputs:['dias'],title:'Gráfica de control p',description:'Proporción diaria de no conformes con límites a 3 sigma según las habitaciones preparadas cada día.',fn:(dias)=>{
+const pb=dias.reduce((s,d)=>s+Number(d.no_conformes),0)/dias.reduce((s,d)=>s+Number(d.preparadas),0);
+return dias.map(d=>{const n=Number(d.preparadas),p=Number(d.no_conformes)/n,e=3*Math.sqrt(pb*(1-pb)/n);return {fecha:d.fecha,dia:d.dia,tipo:d.tipo,n,p,lc:pb,lcs:pb+e,lci:Math.max(0,pb-e),fuera:p>pb+e}})}});
+dash.calc('regresion',{inputs:['dias'],title:'Carga vs. no conformidades',description:'Correlación y recta de mínimos cuadrados entre habitaciones preparadas y no conformidades por día.',fn:(dias)=>{
+const xs=dias.map(d=>Number(d.preparadas)),ys=dias.map(d=>Number(d.no_conformidades)),n=xs.length,mx=xs.reduce((a,b)=>a+b,0)/n,my=ys.reduce((a,b)=>a+b,0)/n;let sxy=0,sxx=0,syy=0;
+xs.forEach((x,i)=>{sxy+=(x-mx)*(ys[i]-my);sxx+=(x-mx)**2;syy+=(ys[i]-my)**2});const r=sxy/Math.sqrt(sxx*syy),m=sxy/sxx;
+return [{r,r_txt:r.toFixed(3).replace('.',','),pendiente:m,intercepto:my-m*mx}]}});
+</script>
+<script>
+(()=>{
+const ACC='#B9482F',f1=v=>v.toFixed(1).replace('.',','),pc=v=>(v*100).toFixed(1).replace('.',',')+'%';
+const seg=[...document.querySelectorAll('.rb-seg button')],picked=document.querySelector('.rb-picked'),selTxt=document.querySelector('.rb-sel');
+seg.forEach(b=>b.addEventListener('click',()=>dash.setParams({tipo:b.dataset.t,dia:null})));
+picked.addEventListener('click',()=>dash.setParams({dia:null}));
+const grupo=()=>{const p=dash.params();return p.dia||p.tipo||'todos'};
+const inSel=(r)=>{const p=dash.params();if(p.dia)return r.fecha===p.dia;const t=p.tipo||'todos';return t==='todos'||r.tipo===t};
+const fechaTxt=f=>f.slice(8,10)+'/'+f.slice(5,7);
+function tipOf(el){return el.parentNode.querySelector('.rb-tip')}
+function showTip(chart,ev,lines){const t=tipOf(chart),box=chart.parentNode.getBoundingClientRect();t.replaceChildren(...lines.map(s=>{const d=document.createElement('div');d.textContent=s;return d}));t.style.display='block';
+let x=ev.clientX-box.left+12,y=ev.clientY-box.top+12;if(x+t.offsetWidth>box.width-8)x=ev.clientX-box.left-t.offsetWidth-12;t.style.left=x+'px';t.style.top=y+'px'}
+function hideTip(chart){tipOf(chart).style.display='none'}
+function svgFor(el,H){el.replaceChildren();el.classList.remove('dash-skeleton');const W=Math.max(300,el.clientWidth||600);return [d3.select(el).append('svg').attr('width','100%').attr('viewBox',`0 0 ${W} ${H}`),W]}
+function failed(el,ids){const bad=ids.some(id=>dash.data(id).status==='error');if(bad){el.classList.remove('dash-skeleton');el.textContent='Failed to load'}return ids.some(id=>dash.data(id).status!=='ok')}
+function controls(){const p=dash.params(),t=p.tipo||'todos';seg.forEach(b=>b.setAttribute('aria-pressed',String(!p.dia&&b.dataset.t===t)));
+const dd=dash.data('dias');const row=p.dia&&dd.status==='ok'?dd.data.find(r=>r.fecha===p.dia):null;
+picked.hidden=!p.dia;picked.textContent=row?`${row.dia} ${fechaTxt(row.fecha)} ×`:'';
+selTxt.textContent=p.dia?'Mostrando un solo día':t==='todos'?'Mostrando los 14 días':t==='Entre semana'?'Mostrando de lunes a jueves':'Mostrando de viernes a domingo'}
+function kpis(){const r=dash.data('resumen');const g=grupo();
+document.querySelectorAll('.rb-kv').forEach(el=>{el.setAttribute('data-where','grupo='+encodeURIComponent(g));
+if(r.status!=='ok'){if(r.status==='error'){el.classList.remove('dash-skeleton');el.textContent='Failed to load'}return}
+el.classList.remove('dash-skeleton');const row=r.data.find(x=>x.grupo===g),f=el.dataset.field;if(!row){el.textContent='—';return}
+el.textContent=f==='preparadas'||f==='no_conformidades'?d3.format(',')(row[f]):row[f];
+el.classList.toggle('bad',(f==='p_txt'&&row.p>=0.08)||(f==='cpk_txt'&&row.cpk<1));el.classList.toggle('good',(f==='p_txt'&&row.p<0.08)||(f==='cpk_txt'&&row.cpk>=1))})}
+function drawP(){const el=document.getElementById('c-p');if(failed(el,['control']))return;const rows=dash.data('control').data,H=300,[svg,W]=svgFor(el,H),m={l:40,r:56,t:14,b:44};
+const x=d3.scaleBand(rows.map(r=>r.fecha),[m.l,W-m.r]).padding(.18),y=d3.scaleLinear([0,.8],[H-m.b,m.t]),bw=x.bandwidth();
+rows.forEach(r=>{if(inSel(r)&&grupo()!=='todos')svg.append('rect').attr('x',x(r.fecha)).attr('y',m.t).attr('width',bw).attr('height',H-m.b-m.t).attr('fill',ACC).attr('opacity',.08)});
+[0,.2,.4,.6,.8].forEach(v=>{svg.append('line').attr('x1',m.l).attr('x2',W-m.r).attr('y1',y(v)).attr('y2',y(v)).attr('stroke','var(--cds-chart-grid)');svg.append('text').attr('x',m.l-8).attr('y',y(v)+4).attr('text-anchor','end').text(f1(v))});
+rows.forEach(r=>svg.append('line').attr('x1',x(r.fecha)).attr('x2',x(r.fecha)+bw).attr('y1',y(r.lcs)).attr('y2',y(r.lcs)).attr('stroke','var(--cds-chart-reference)').attr('stroke-width',2).attr('stroke-dasharray','5 4'));
+svg.append('line').attr('x1',m.l).attr('x2',W-m.r).attr('y1',y(rows[0].lc)).attr('y2',y(rows[0].lc)).attr('stroke','var(--color-ok)').attr('stroke-width',1.5);
+svg.append('text').attr('x',W-m.r+6).attr('y',y(rows[0].lc)+4).text('LC '+rows[0].lc.toFixed(3).replace('.',','));
+svg.append('text').attr('x',W-m.r+6).attr('y',y(rows.at(-1).lcs)+4).text('LCS');
+svg.append('path').attr('d',d3.line().x(r=>x(r.fecha)+bw/2).y(r=>y(r.p))(rows)).attr('fill','none').attr('stroke','var(--color-fg)').attr('stroke-width',2).attr('stroke-linejoin','round');
+const p=dash.params();
+rows.forEach(r=>{const cx=x(r.fecha)+bw/2;svg.append('circle').attr('cx',cx).attr('cy',y(r.p)).attr('r',r.fuera?7:p.dia===r.fecha?6:4.5).attr('fill',r.fuera?'var(--cds-chart-status-critical)':p.dia===r.fecha?ACC:'var(--color-fg)');
+svg.append('text').attr('x',cx).attr('y',H-m.b+16).attr('text-anchor','middle').attr('class',p.dia===r.fecha?'rb-strong':null).text(r.dia);
+svg.append('text').attr('x',cx).attr('y',H-m.b+31).attr('text-anchor','middle').text(fechaTxt(r.fecha));
+svg.append('rect').attr('x',x(r.fecha)).attr('y',m.t).attr('width',bw).attr('height',H-m.t).attr('fill','transparent').style('cursor','pointer')
+.on('click',()=>dash.setParams({dia:r.fecha})).on('mousemove',ev=>showTip(el,ev,[`${r.dia} ${fechaTxt(r.fecha)}`,`p = ${r.p.toFixed(3).replace('.',',')} (${r.n} habitaciones)`,`LCS = ${r.lcs.toFixed(3).replace('.',',')}`+(r.fuera?' · fuera de control':'')])).on('mouseleave',()=>hideTip(el))});
+const out=rows.find(r=>r.fuera);if(out)svg.append('text').attr('x',x(out.fecha)-6).attr('y',y(out.p)+4).attr('text-anchor','end').attr('class','rb-strong').text('Fuera de control')}
+function drawPa(){const el=document.getElementById('c-pa');if(failed(el,['pareto']))return;const g=grupo(),rows=dash.data('pareto').data.filter(r=>r.grupo===g),H=Math.max(120,rows.length*38+30),[svg,W]=svgFor(el,H);
+if(!rows.length){svg.append('text').attr('x',0).attr('y',20).text('Sin no conformidades en la selección');return}
+const lab=svg.append('g'),names=rows.map(r=>lab.append('text').text(r.codigo+' · '+r.categoria).node());const lw=Math.min(W*.5,Math.max(...names.map(n=>n.getComputedTextLength()))+10);lab.remove();
+const x=d3.scaleLinear([0,d3.max(rows,r=>r.cantidad)],[lw,W-240]);
+rows.forEach((r,i)=>{const y0=i*38+6;svg.append('text').attr('x',lw-10).attr('y',y0+17).attr('text-anchor','end').attr('class',r.vital?'rb-strong':null).text(r.codigo+' · '+r.categoria);
+svg.append('rect').attr('x',lw).attr('y',y0+4).attr('height',20).attr('rx',4).attr('fill',r.vital?ACC:'var(--cds-chart-muted)').attr('width',0).transition().duration(450).attr('width',Math.max(2,x(r.cantidad)-lw));
+svg.append('text').attr('x',x(r.cantidad)+8).attr('y',y0+19).text(`${r.cantidad} · ${pc(r.pct)} · acum. ${pc(r.acumulado)}`);
+svg.append('rect').attr('x',0).attr('y',y0).attr('width',W).attr('height',34).attr('fill','transparent').on('mousemove',ev=>showTip(el,ev,[r.categoria,`${r.cantidad} no conformidades (${pc(r.pct)})`,`Acumulado: ${pc(r.acumulado)}`])).on('mouseleave',()=>hideTip(el))})}
+function drawH(){const el=document.getElementById('c-h');if(failed(el,['tiempos','resumen','dias']))return;const dias=dash.data('dias').data,set=new Set(dias.filter(inSel).map(d=>d.fecha));
+const t=dash.data('tiempos').data.filter(r=>set.has(r.fecha)).map(r=>Number(r.minutos)),row=dash.data('resumen').data.find(r=>r.grupo===grupo());
+const H=300,[svg,W]=svgFor(el,H),m={l:34,r:12,t:26,b:40},bins=d3.range(22,52).map(v=>({m:v,n:t.filter(x=>x===v).length}));
+const x=d3.scaleLinear([21.5,51.5],[m.l,W-m.r]),ymax=Math.max(4,d3.max(bins,b=>b.n)),y=d3.scaleLinear([0,ymax],[H-m.b,m.t]),bw=Math.max(2,x(1)-x(0)-2);
+y.ticks(4).forEach(v=>{svg.append('line').attr('x1',m.l).attr('x2',W-m.r).attr('y1',y(v)).attr('y2',y(v)).attr('stroke','var(--cds-chart-grid)');svg.append('text').attr('x',m.l-6).attr('y',y(v)+4).attr('text-anchor','end').text(v)});
+bins.forEach(b=>{if(!b.n)return;const ok=b.m>=25&&b.m<=45;svg.append('rect').attr('x',x(b.m)-bw/2).attr('width',bw).attr('rx',2).attr('fill',ok?'var(--cds-chart-muted)':'var(--cds-chart-status-critical)').attr('y',H-m.b).attr('height',0)
+.on('mousemove',ev=>showTip(el,ev,[`${b.m} min`,`${b.n} habitaciones`])).on('mouseleave',()=>hideTip(el)).transition().duration(450).attr('y',y(b.n)).attr('height',H-m.b-y(b.n))});
+svg.append('line').attr('x1',m.l).attr('x2',W-m.r).attr('y1',H-m.b).attr('y2',H-m.b).attr('stroke','var(--cds-chart-axis)');
+[25,30,35,40,45,50].forEach(v=>svg.append('text').attr('x',x(v)).attr('y',H-m.b+16).attr('text-anchor','middle').text(v));
+svg.append('text').attr('x',(m.l+W-m.r)/2).attr('y',H-4).attr('text-anchor','middle').text('Minutos por habitación');
+[[24.5,'LEI 25','end',-4],[45.5,'LES 45','start',4]].forEach(([v,s,a,d])=>{svg.append('line').attr('x1',x(v)).attr('x2',x(v)).attr('y1',m.t-10).attr('y2',H-m.b).attr('stroke','var(--cds-chart-reference)').attr('stroke-dasharray','5 4');svg.append('text').attr('x',x(v)+d).attr('y',m.t-12).attr('text-anchor',a).text(s)});
+if(row){svg.append('line').attr('x1',x(row.tiempo_medio)).attr('x2',x(row.tiempo_medio)).attr('y1',m.t).attr('y2',H-m.b).attr('stroke',ACC).attr('stroke-width',2);
+svg.append('text').attr('x',x(row.tiempo_medio)+5).attr('y',m.t+10).attr('class','rb-strong').text('Media '+f1(row.tiempo_medio))}}
+function drawD(){const el=document.getElementById('c-d');if(failed(el,['dias','regresion']))return;const rows=dash.data('dias').data,rg=dash.data('regresion').data[0],H=300,[svg,W]=svgFor(el,H),m={l:40,r:20,t:16,b:44};
+const x=d3.scaleLinear([6,18],[m.l,W-m.r]),y=d3.scaleLinear([0,16],[H-m.b,m.t]);
+[0,4,8,12,16].forEach(v=>{svg.append('line').attr('x1',m.l).attr('x2',W-m.r).attr('y1',y(v)).attr('y2',y(v)).attr('stroke','var(--cds-chart-grid)');svg.append('text').attr('x',m.l-8).attr('y',y(v)+4).attr('text-anchor','end').text(v)});
+[6,8,10,12,14,16,18].forEach(v=>svg.append('text').attr('x',x(v)).attr('y',H-m.b+16).attr('text-anchor','middle').text(v));
+svg.append('text').attr('x',(m.l+W-m.r)/2).attr('y',H-6).attr('text-anchor','middle').text('Habitaciones preparadas en el día');
+svg.append('rect').attr('x',x(14)).attr('y',m.t).attr('width',W-m.r-x(14)).attr('height',H-m.b-m.t).attr('fill',ACC).attr('opacity',.06);
+svg.append('line').attr('x1',x(14)).attr('x2',x(14)).attr('y1',m.t).attr('y2',H-m.b).attr('stroke',ACC).attr('stroke-dasharray','5 4');
+svg.append('text').attr('x',x(14)+6).attr('y',m.t+12).attr('class','rb-strong').text('Más de 14: sobrecarga');
+svg.append('line').attr('x1',x(8.4)).attr('x2',x(17.6)).attr('y1',y(rg.pendiente*8.4+rg.intercepto)).attr('y2',y(rg.pendiente*17.6+rg.intercepto)).attr('stroke','var(--color-fg)').attr('stroke-width',1.5).attr('stroke-dasharray','2 3');
+rows.forEach(r=>{const s=inSel(r);svg.append('circle').attr('cx',x(Number(r.preparadas))).attr('cy',y(Number(r.no_conformidades))).attr('r',s?7:5).attr('fill',s?ACC:'var(--cds-chart-muted)').attr('opacity',s?.95:.7)
+.on('click',()=>dash.setParams({dia:r.fecha})).style('cursor','pointer').on('mousemove',ev=>showTip(el,ev,[`${r.dia} ${fechaTxt(r.fecha)}`,`${r.preparadas} habitaciones · ${r.no_conformidades} no conformidades`])).on('mouseleave',()=>hideTip(el))})}
+dash.onData(()=>{controls();kpis();drawP();drawPa();drawH();drawD();document.querySelectorAll('[data-source="regresion"][data-field="r_txt"]').forEach(e=>e.textContent=dash.data('regresion').data[0].r_txt)});
+})();
+</script>
+
+</div>
+</body>
+</html>

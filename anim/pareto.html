@@ -1,0 +1,28 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:transparent;font-family:'Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden}
+.b{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);animation:g .9s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes g{to{transform:scaleY(1)}}
+.f{opacity:0;animation:o .5s forwards}@keyframes o{to{opacity:1}}
+#cum{stroke-dasharray:2000;stroke-dashoffset:2000;animation:d 1.6s 1.4s ease forwards}@keyframes d{to{stroke-dashoffset:0}}
+</style></head><body><svg id="s" width="1664" height="630" viewBox="0 0 1664 630"></svg>
+<script>
+const S=document.getElementById('s'),NS='http://www.w3.org/2000/svg';
+const D=[['A','Art. de aseo',17],['B','Baño',12],['C','No lista',9],['D','Ropa de cama',6],['E','Desperfecto',4],['F','Asignación',2],['G','Reclamo',1]];
+const T=D.reduce((s,r)=>s+r[2],0),x0=90,x1=1540,base=450,h=400,bw=(x1-x0)/D.length;
+const cx=i=>x0+bw*i+bw/2,yv=v=>base-v/T*h,yp=p=>base-p/100*h;
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);S.appendChild(e);return e}
+function tx(x,y,s,a){const e=el('text',Object.assign({x,y,'font-size':24,fill:'#1F2622','text-anchor':'middle'},a||{}));e.textContent=s;return e}
+[0,25,50,75,100].forEach(p=>{el('line',{x1:x0,x2:x1,y1:yp(p),y2:yp(p),stroke:'#DED3C1'});tx(x1+14,yp(p)+8,p+'%',{'text-anchor':'start',fill:'#7A6F60'})});
+[0,10,20,30,40,50].forEach(v=>tx(x0-14,yv(v)+8,v,{'text-anchor':'end',fill:'#7A6F60'}));
+el('line',{x1:x0,x2:x1,y1:yp(80),y2:yp(80),stroke:'#7A6F60','stroke-dasharray':'8 6','stroke-width':2});
+tx(x0+10,yp(80)-12,'Umbral 80%',{'text-anchor':'start',fill:'#7A6F60'});
+let c=0;const pts=[];
+D.forEach((r,i)=>{c+=r[2];const vital=c<=T*.75;
+const b=el('rect',{x:cx(i)-bw*.31,y:yv(r[2]),width:bw*.62,height:base-yv(r[2]),rx:6,fill:vital?'#B9482F':'#BFB29E',class:'b',style:`animation-delay:${i*.12}s`});
+tx(cx(i),base+40,r[0]+' · '+r[1],{'font-weight':600});tx(cx(i),base+74,r[2]+' ('+(r[2]/T*100).toFixed(1).replace('.',',')+'%)',{fill:'#5B5348'});
+pts.push([cx(i),yp(c/T*100),c/T*100])});
+el('line',{x1:x0,x2:x1,y1:base,y2:base,stroke:'#1F2622','stroke-width':2});
+el('polyline',{id:'cum',points:pts.map(p=>p[0]+','+p[1]).join(' '),fill:'none',stroke:'#1F2622','stroke-width':3});
+pts.forEach((p,i)=>{el('circle',{cx:p[0],cy:p[1],r:7,fill:'#1F2622',class:'f',style:`animation-delay:${1.4+i*.22}s`});
+const up=i==0||i==3;tx(p[0]+(up?0:12),p[1]+(up?-18:34),p[2].toFixed(1).replace('.',',')+'%',{'text-anchor':up?'middle':'start','font-weight':i==2?700:400,class:'f',style:`animation-delay:${1.4+i*.22}s`})});
+</script></body></html>

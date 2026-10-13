@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{margin:0;background:transparent;font-family:'Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden}
+.f{opacity:0;animation:o .5s forwards}@keyframes o{to{opacity:1}}
+#ln{stroke-dasharray:3000;stroke-dashoffset:3000;animation:d 3.4s .4s linear forwards}@keyframes d{to{stroke-dashoffset:0}}
+</style></head><body><svg id="s" width="1664" height="630" viewBox="0 0 1664 630"></svg>
+<script>
+const S=document.getElementById('s'),NS='http://www.w3.org/2000/svg';
+const D=[['Mar','01',9,1],['Mié','02',8,1],['Jue','03',10,1],['Vie','04',14,3],['Sáb','05',16,5],['Dom','06',13,3],['Lun','07',9,1],['Mar','08',10,1],['Mié','09',9,1],['Jue','10',11,2],['Vie','11',15,4],['Sáb','12',17,10],['Dom','13',12,2],['Lun','14',8,1]];
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);S.appendChild(e);return e}
+function tx(x,y,s,a){const e=el('text',Object.assign({x,y,'font-size':24,fill:'#1F2622','text-anchor':'middle'},a||{}));e.textContent=s;return e}
+const pb=D.reduce((s,r)=>s+r[3],0)/D.reduce((s,r)=>s+r[2],0),lcs=n=>pb+3*Math.sqrt(pb*(1-pb)/n);
+const x0=100,x1=1500,base=480,y0=20,bw=(x1-x0)/D.length,cx=i=>x0+bw*i+bw/2,Y=v=>base-v/.8*(base-y0);
+[0,.2,.4,.6,.8].forEach(v=>{el('line',{x1:x0,x2:x1,y1:Y(v),y2:Y(v),stroke:'#DED3C1'});tx(x0-16,Y(v)+8,v.toFixed(1).replace('.',','),{'text-anchor':'end',fill:'#7A6F60'})});
+el('line',{x1:x0,x2:x1,y1:base,y2:base,stroke:'#1F2622','stroke-width':2});
+D.forEach((r,i)=>{tx(cx(i),base+36,r[0],{fill:'#5B5348'});tx(cx(i),base+66,r[1],{fill:'#5B5348'});
+el('line',{x1:x0+bw*i+6,x2:x0+bw*(i+1)-6,y1:Y(lcs(r[2])),y2:Y(lcs(r[2])),stroke:'#7A6F60','stroke-width':3,'stroke-dasharray':'8 5'})});
+el('line',{x1:x0,x2:x1,y1:Y(pb),y2:Y(pb),stroke:'#3D6B4F','stroke-width':3});
+tx(x1+14,Y(lcs(8))+8,'LCS',{'text-anchor':'start',fill:'#7A6F60','font-weight':700});
+tx(x1+14,Y(pb)+8,'LC '+pb.toFixed(3).replace('.',','),{'text-anchor':'start',fill:'#3D6B4F','font-weight':700});
+tx(x1+14,base+8,'LCI 0',{'text-anchor':'start',fill:'#7A6F60','font-weight':700});
+el('polyline',{id:'ln',points:D.map((r,i)=>cx(i)+','+Y(r[3]/r[2])).join(' '),fill:'none',stroke:'#1F2622','stroke-width':3});
+D.forEach((r,i)=>{const p=r[3]/r[2],out=p>lcs(r[2]);el('circle',{cx:cx(i),cy:Y(p),r:out?15:9,fill:out?'#B9482F':'#1F2622',class:'f',style:`animation-delay:${.4+i*.24}s`});
+if(out){tx(cx(i)-24,Y(.76),`p = ${p.toFixed(3).replace('.',',')} > LCS ${lcs(r[2]).toFixed(3).replace('.',',')}`,{'text-anchor':'end','font-weight':700,fill:'#B9482F',class:'f',style:'animation-delay:3.9s'});
+tx(cx(i)-24,Y(.70),'Grupo de 9 huéspedes + falta de personal',{'text-anchor':'end',fill:'#5B5348',class:'f',style:'animation-delay:4.3s'})}});
+</script></body></html>
